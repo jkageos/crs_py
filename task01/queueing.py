@@ -7,7 +7,7 @@ from multiprocessing import Pool
 import matplotlib.pyplot as plt
 import numpy as np
 
-from utils.random import get_seeded_rng, sample_poisson, seed_rng
+from utils.random import get_seeded_rng
 
 
 def poisson_pmf(
