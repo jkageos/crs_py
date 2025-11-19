@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import math
 import os
-from functools import partial
 from multiprocessing import Pool
 
 import matplotlib.pyplot as plt
@@ -16,10 +15,13 @@ def poisson_pmf(
 ) -> tuple[np.ndarray, np.ndarray]:
     """Return (i_values, pmf) for Poisson(α) with Δt=1."""
     if i_max is None:
-        # Choose a range covering most mass (~α + 6√α, floor)
         i_max = max(10, int(alpha + 6 * math.sqrt(max(alpha, 1e-9))))
     i = np.arange(0, i_max + 1)
-    pmf = np.exp(-alpha) * np.power(alpha, i) / np.vectorize(math.factorial)(i)
+    # Stable, typed iterative computation: p(k) = p(k-1) * α / k
+    pmf = np.empty_like(i, dtype=float)
+    pmf[0] = math.exp(-alpha)
+    for k in range(1, i.size):
+        pmf[k] = pmf[k - 1] * (alpha / k)
     return i, pmf
 
 

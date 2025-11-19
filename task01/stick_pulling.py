@@ -5,38 +5,47 @@ from multiprocessing import Pool
 
 import matplotlib.pyplot as plt
 import numpy as np
+from numpy.typing import NDArray
 
 from utils.random import get_seeded_rng, seed_rng
 
 M_STICKS = 20
 WAIT_AT_STICK = 7
 C_QUAD = 0.12
-ZETA_VALUES = np.array([0, 1, 2])
+ZETA_VALUES: NDArray[np.int32] = np.array([0, 1, 2], dtype=np.int32)
 
 
 def _commute_times_vectorized(
     N: int, count: int, strategy: str, local_rng
-) -> np.ndarray:
+) -> NDArray[np.int32]:
     """Generate multiple commute times at once."""
-    zetas = local_rng.choice(ZETA_VALUES, size=count)
+    zetas: NDArray[np.int32] = local_rng.choice(ZETA_VALUES, size=count).astype(
+        np.int32
+    )
     if strategy == "linear":
-        return N + zetas
+        return (np.int32(N) + zetas).astype(np.int32)
     elif strategy == "quadratic":
-        return (C_QUAD * N * N + zetas).astype(np.int32)
+        # Integer time steps: floor(c*N^2) + ζ
+        base = np.int32(C_QUAD * (N * N))
+        return (base + zetas).astype(np.int32)
     else:
         raise ValueError("strategy must be 'linear' or 'quadratic'")
 
 
-def _random_other_destinations(current: np.ndarray, local_rng) -> np.ndarray:
+def _random_other_destinations(
+    current: NDArray[np.integer], local_rng
+) -> NDArray[np.integer]:
     """Sample destinations different from current stick for each robot."""
     if current.size == 0:
         return current
-    dest = local_rng.integers(0, M_STICKS, size=current.size)
+    dest = local_rng.integers(0, M_STICKS, size=current.size, dtype=current.dtype)
     same = dest == current
     # Resample until all differ (N <= 20, so this is cheap)
     attempts = 0
     while np.any(same) and attempts < 100:
-        dest[same] = local_rng.integers(0, M_STICKS, size=int(np.sum(same)))
+        dest[same] = local_rng.integers(
+            0, M_STICKS, size=int(np.sum(same)), dtype=current.dtype
+        )
         same = dest == current
         attempts += 1
     return dest
@@ -55,7 +64,9 @@ def simulate_stick_pulling(
     mode = np.zeros(N, dtype=np.int8)  # 0=waiting, 1=travel
     location = local_rng.integers(0, M_STICKS, size=N, dtype=np.int16)
     wait_time = np.zeros(N, dtype=np.int16)
-    travel_remaining = np.zeros(N, dtype=np.int16)
+    travel_remaining = np.zeros(
+        N, dtype=np.int32
+    )  # match _commute_times_vectorized dtype
 
     pulled = 0
 
@@ -143,7 +154,7 @@ def run_stick_experiments(
                     for r in range(runs)
                 ]
                 run_results = pool.map(_simulate_single_stick_run, tasks)
-                results[N] = np.mean(run_results)
+                results[N] = float(np.mean(run_results))
     else:
         # Sequential
         if seed is not None:
@@ -155,7 +166,7 @@ def run_stick_experiments(
                 total += simulate_stick_pulling(
                     N, steps=steps, strategy=strategy, seed=run_seed
                 )
-            results[N] = total / runs
+            results[N] = float(total / runs)
 
     return results
 
