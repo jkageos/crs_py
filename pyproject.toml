@@ -1,5 +1,5 @@
 [project]
-name = "swarmy"
+name = "crs"
 version = "0.1.0"
 description = "Swarm robotics simulation"
 requires-python = ">=3.13"

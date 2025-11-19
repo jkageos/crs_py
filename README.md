@@ -1,4 +1,4 @@
-# Swarmy – Task 1.1 and 1.2
+# CRS – Task 1.1 and 1.2
 
 Requirements:
 - Python 3.13
