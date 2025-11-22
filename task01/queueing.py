@@ -25,7 +25,7 @@ def poisson_pmf(
     return i, pmf
 
 
-def plot_poisson_pmf(alphas: list[float], save_dir: str = "plots") -> None:
+def plot_poisson_pmf(alphas: list[float], save_dir: str = "plots/task01") -> None:
     os.makedirs(save_dir, exist_ok=True)
     plt.figure(figsize=(8, 5))
     for a in alphas:

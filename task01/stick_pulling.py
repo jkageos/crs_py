@@ -177,7 +177,7 @@ def plot_stick_capacity(
     steps: int = 1000,
     runs: int = 5000,
     seed: int = 2024,
-    save_dir: str = "plots",
+    save_dir: str = "plots/task01",
 ):
     os.makedirs(save_dir, exist_ok=True)
     N_values = list(range(N_min, N_max + 1))
