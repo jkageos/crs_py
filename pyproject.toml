@@ -1,7 +1,7 @@
 [project]
 name = "crs"
 version = "0.1.0"
-description = "Swarm robotics simulation"
+description = "Collective robotics"
 requires-python = ">=3.13"
 dependencies = ["pygame", "pyyaml", "numpy", "matplotlib"]
 
