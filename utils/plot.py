@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
 
+# Disable interactive display globally
+plt.ioff()
+
 
 def ensure_dir_for_file(path: str) -> None:
     d = os.path.dirname(path)
@@ -34,7 +37,7 @@ def line_plot(
     if save_path:
         ensure_dir_for_file(save_path)
         plt.savefig(save_path, dpi=150)
-    plt.show()
+    plt.close()
 
 
 def shaded_ci_plot(
@@ -64,4 +67,4 @@ def shaded_ci_plot(
     if save_path:
         ensure_dir_for_file(save_path)
         plt.savefig(save_path, dpi=150)
-    plt.show()
+    plt.close()
