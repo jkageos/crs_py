@@ -3,7 +3,7 @@ name = "crs"
 version = "0.1.0"
 description = "Collective robotics"
 requires-python = ">=3.13"
-dependencies = ["pygame", "pyyaml", "numpy", "matplotlib"]
+dependencies = ["numpy", "matplotlib"]
 
 [dependency-groups]
 dev = ["ruff"]
